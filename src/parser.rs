@@ -12,7 +12,7 @@ fn main() -> Result<()> {
     }
 
     let reader = File::open(&args[1]).unwrap();
-    let parsed = CoSWID::deserialize(&reader);
+    let parsed = CoSWID::from_cbor(&reader);
 
     println!("Parsed CoSWID: {:?}", parsed);
 

@@ -2,7 +2,7 @@ mod error;
 pub use error::{Error, Result};
 
 mod wire;
-use wire::CoSWIDWire;
+use wire::Root;
 
 use std::convert::TryFrom;
 
@@ -177,14 +177,13 @@ pub struct CoSWID {
 }
 
 impl CoSWID {
-    pub fn serialize<W: std::io::Write>(&self, writer: W) -> Result<()> {
-        ciborium::ser::into_writer(self, writer)
-            .map_err(|e| e.into())
+    pub fn to_cbor<W: std::io::Write>(&self, writer: W) -> Result<()> {
+        Root::try_from(self)
+            .and_then(|r| r.to_cbor(writer))
     }
 
-    pub fn deserialize<R: std::io::Read>(reader: R) -> Result<Self> {
-        ciborium::de::from_reader::<CoSWIDWire, _>(reader)
-            .map_err(Error::from)
+    pub fn from_cbor<R: std::io::Read>(reader: R) -> Result<Self> {
+        Root::from_cbor(reader)
             .and_then(CoSWID::try_from)
     }
 }

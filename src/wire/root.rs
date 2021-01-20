@@ -9,12 +9,16 @@ use crate::{
     Error,
 };
 
-pub(crate) type CoSWIDWire = HashMap<RootTagIndex, ciborium::value::Value>;
+type RootInner = HashMap<TagIndex, ciborium::value::Value>;
+
+pub(crate) struct Root {
+    inner: RootInner,
+}
 
 #[derive(Debug, Copy, Clone, Serialize_repr, Deserialize_repr, Hash, PartialEq, Eq)]
 #[repr(u32)]
 #[non_exhaustive]
-pub(crate) enum RootTagIndex {
+enum TagIndex {
     TagID = 0,
     SoftwareName = 1,
     Entity = 2,
@@ -73,7 +77,7 @@ pub(crate) enum RootTagIndex {
     UnspscVersion = 57,
 }
 
-fn try_get_value<'de, T: serde::Deserialize<'de>>(wire: &CoSWIDWire, index: RootTagIndex) -> Result<T> {
+fn try_get_value<'de, T: serde::Deserialize<'de>>(wire: &RootInner, index: TagIndex) -> Result<T> {
     wire
         .get(&index)
         .ok_or_else(|| Error::MissingField(format!("{:?}", index)))?
@@ -81,7 +85,7 @@ fn try_get_value<'de, T: serde::Deserialize<'de>>(wire: &CoSWIDWire, index: Root
         .map_err(|e| Error::from_field(format!("{:?}", index), e))
 }
 
-fn try_get_optional_value<'de, T: serde::Deserialize<'de>>(wire: &CoSWIDWire, index: RootTagIndex) -> Result<Option<T>> {
+fn try_get_optional_value<'de, T: serde::Deserialize<'de>>(wire: &RootInner, index: TagIndex) -> Result<Option<T>> {
     match try_get_value::<T>(wire, index) {
         Err(Error::MissingField(_)) => Ok(None),
         Err(e) => Err(e),
@@ -89,22 +93,44 @@ fn try_get_optional_value<'de, T: serde::Deserialize<'de>>(wire: &CoSWIDWire, in
     }
 }
 
-impl TryFrom<CoSWIDWire> for CoSWID {
+impl TryFrom<Root> for CoSWID {
     type Error = Error;
 
-    fn try_from(wire: CoSWIDWire) -> Result<Self> {
+    fn try_from(wire: Root) -> Result<Self> {
+        let wire = wire.inner;
         Ok(
             CoSWID {
-                tag_id: try_get_value(&wire, RootTagIndex::TagID)?,
-                tag_version: try_get_value(&wire, RootTagIndex::TagVersion)?,
-                corpus: try_get_optional_value(&wire, RootTagIndex::Corpus)?,
-                patch: try_get_optional_value(&wire, RootTagIndex::Patch)?,
-                supplemental: try_get_optional_value(&wire, RootTagIndex::Supplemental)?,
-                software_name: try_get_value(&wire, RootTagIndex::SoftwareName)?,
-                software_version: try_get_optional_value(&wire, RootTagIndex::SoftwareVersion)?,
-                version_scheme: try_get_optional_value(&wire, RootTagIndex::VersionScheme)?,
-                media: try_get_optional_value(&wire, RootTagIndex::Media)?,
+                tag_id: try_get_value(&wire, TagIndex::TagID)?,
+                tag_version: try_get_value(&wire, TagIndex::TagVersion)?,
+                corpus: try_get_optional_value(&wire, TagIndex::Corpus)?,
+                patch: try_get_optional_value(&wire, TagIndex::Patch)?,
+                supplemental: try_get_optional_value(&wire, TagIndex::Supplemental)?,
+                software_name: try_get_value(&wire, TagIndex::SoftwareName)?,
+                software_version: try_get_optional_value(&wire, TagIndex::SoftwareVersion)?,
+                version_scheme: try_get_optional_value(&wire, TagIndex::VersionScheme)?,
+                media: try_get_optional_value(&wire, TagIndex::Media)?,
             }
         )
+    }
+}
+
+impl TryFrom<&CoSWID> for Root {
+    type Error = Error;
+
+    fn try_from(_coswid: &CoSWID) -> Result<Self> {
+        todo!();
+    }
+}
+
+impl Root {
+    pub fn to_cbor<W: std::io::Write>(&self, writer: W) -> Result<()> {
+        ciborium::ser::into_writer(&self.inner, writer)
+            .map_err(|e| e.into())
+    }
+
+    pub fn from_cbor<R: std::io::Read>(reader: R) -> Result<Self> {
+        ciborium::de::from_reader::<RootInner, _>(reader)
+            .map_err(Error::from)
+            .map(|r| Root{inner: r})
     }
 }
