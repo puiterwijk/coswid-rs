@@ -1,13 +1,10 @@
 mod error;
 pub use error::{Error, Result};
+use std::collections::HashMap;
 
 mod wire;
-use wire::Root;
 
-use std::convert::TryFrom;
-
-use serde::{Serialize, Deserialize};
-use serde_repr::{Serialize_repr, Deserialize_repr};
+use serde_repr::{Deserialize_repr, Serialize_repr};
 
 /*
 Parsed CoSWID:
@@ -157,8 +154,179 @@ pub enum VersionScheme {
     Semver = 16384,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct CoSWID {
+#[derive(Debug, Serialize_repr, Deserialize_repr, PartialEq, Eq, Hash)]
+#[repr(u32)]
+pub enum GlobalAttributesKey {
+    Lang = 15,
+    Directory = 16,
+    File = 17,
+    Process = 18,
+    Resource = 19,
+    Size = 20,
+    FileVersion = 21,
+    Key = 22,
+    Location = 23,
+    FsName = 24,
+    Root = 25,
+    PathElements = 26,
+    ProcessName = 27,
+    Pid = 28,
+    Type = 29,
+    EntityName = 31,
+    RegId = 32,
+    Role = 33,
+    Thumbprint = 34,
+    Date = 35,
+    DeviceID = 36,
+    Artifact = 37,
+    Href = 38,
+    Ownership = 39,
+    Rel = 40,
+    MediaType = 41,
+    Use = 42,
+    ActivationStatus = 43,
+    ChannelType = 44,
+    ColloquiaVersion = 45,
+    Description = 46,
+    Edition = 47,
+    EntitlementDataRequired = 48,
+    EntitlementKey = 49,
+    Generator = 50,
+    PersistentId = 51,
+    Product = 52,
+    ProductFamily = 53,
+    Revision = 54,
+    Summary = 55,
+    UnspscCode = 56,
+    UnspscVersion = 57,
+}
+
+#[derive(Debug)]
+pub struct GlobalAttributes {
+    lang: Option<String>,
+    any_attribute: HashMap<u32, ciborium::value::Value>,
+}
+
+impl GlobalAttributes {
+    fn new() -> Self {
+        GlobalAttributes {
+            lang: None,
+            any_attribute: HashMap::new(),
+        }
+    }
+
+    fn is_empty(&self) -> bool {
+        if self.lang.is_some() {
+            false
+        } else {
+            !self.any_attribute.is_empty()
+        }
+    }
+
+    fn get_none_or_some(self) -> Option<Self> {
+        if self.is_empty() {
+            None
+        } else {
+            Some(self)
+        }
+    }
+
+    fn fill_value(&mut self, key: u32, value: ciborium::value::Value) {
+        self.any_attribute.insert(key, value);
+    }
+}
+
+#[derive(Debug)]
+pub enum OneOrMany<T> {
+    One(T),
+    Many(Vec<T>),
+}
+
+pub type AnyURI = String;
+
+// TODO
+pub type HashEntry = String;
+
+#[derive(Debug, Serialize_repr, Deserialize_repr)]
+#[repr(u32)]
+pub enum EntityRole {
+    TagCreator = 1,
+    SoftwareCreator = 2,
+    Aggregator = 3,
+    Distributor = 4,
+    Licensor = 5,
+    Maintainer = 6,
+}
+
+#[derive(Debug)]
+pub struct EntityEntry {
+    entity_name: String,
+    reg_id: Option<AnyURI>,
+    role: OneOrMany<EntityRole>,
+    thumbprint: Option<HashEntry>,
+    global_attributes: Option<GlobalAttributes>,
+    // * $$ entity-extension
+}
+
+#[derive(Debug)]
+pub struct SoftwareMetaEntry {}
+
+#[derive(Debug, Serialize_repr, Deserialize_repr)]
+#[repr(u32)]
+pub enum LinkOwnership {
+    Shared = 1,
+    Private = 2,
+    Abandone = 3,
+}
+
+#[derive(Debug, Serialize_repr, Deserialize_repr)]
+#[repr(u32)]
+pub enum LinkRel {
+    Ancestor = 1,
+    Component = 2,
+    Feature = 3,
+    InstallationMedia = 4,
+    Parent = 6,
+    Patches = 7,
+    Requires = 8,
+    SeeAlso = 9,
+    Supersedes = 10,
+    Supplemental = 11,
+}
+
+#[derive(Debug, Serialize_repr, Deserialize_repr)]
+#[repr(u32)]
+pub enum LinkUse {
+    Optional = 1,
+    Required = 2,
+    Recommended = 3,
+}
+
+#[derive(Debug)]
+pub struct LinkEntry {
+    artifact: Option<String>,
+    href: AnyURI,
+    media: Option<String>,
+    ownership: Option<LinkOwnership>,
+    rel: LinkRel,
+    media_type: Option<String>,
+    link_use: Option<LinkUse>,
+}
+
+#[derive(Debug)]
+pub struct PayloadEntry {}
+
+#[derive(Debug)]
+pub struct EvidenceEntry {}
+
+#[derive(Debug)]
+pub enum PayloadOrEvidence {
+    Payload(OneOrMany<PayloadEntry>),
+    Evidence(OneOrMany<EvidenceEntry>),
+}
+
+#[derive(Debug)]
+pub struct CoSWIDTag {
     tag_id: String,
     tag_version: i32,
     corpus: Option<bool>,
@@ -168,24 +336,12 @@ pub struct CoSWID {
     software_version: Option<String>,
     version_scheme: Option<VersionScheme>,
     media: Option<String>,
-    // software_meta
-    // entity
-    // link
-    // payload-or-evidence
-    // global-attributes
+    software_meta: Option<OneOrMany<SoftwareMetaEntry>>,
+    entity: OneOrMany<EntityEntry>,
+    link: Option<OneOrMany<LinkEntry>>,
+    payload_or_evidence: Option<PayloadOrEvidence>,
+    global_attributes: Option<GlobalAttributes>,
     // coswid-extension
-}
-
-impl CoSWID {
-    pub fn to_cbor<W: std::io::Write>(&self, writer: W) -> Result<()> {
-        Root::try_from(self)
-            .and_then(|r| r.to_cbor(writer))
-    }
-
-    pub fn from_cbor<R: std::io::Read>(reader: R) -> Result<Self> {
-        Root::from_cbor(reader)
-            .and_then(CoSWID::try_from)
-    }
 }
 
 #[cfg(test)]

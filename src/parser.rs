@@ -1,4 +1,4 @@
-use coswid::{Result, CoSWID};
+use coswid::{CoSWIDTag, Result};
 
 use std::env;
 use std::fs::File;
@@ -12,7 +12,7 @@ fn main() -> Result<()> {
     }
 
     let reader = File::open(&args[1]).unwrap();
-    let parsed = CoSWID::from_cbor(&reader);
+    let parsed: CoSWIDTag = ciborium::de::from_reader(&reader)?;
 
     println!("Parsed CoSWID: {:?}", parsed);
 

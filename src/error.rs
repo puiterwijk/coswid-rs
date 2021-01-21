@@ -11,8 +11,6 @@ pub enum Error {
     CborValue(String),
     #[error("IO Error: {0}")]
     Io(String),
-    #[error("Missing field in wire: {0}")]
-    MissingField(String),
     #[error("Invalid field value for {0}: {1}")]
     InvalidField(String, String),
 }
@@ -39,7 +37,7 @@ impl<T: std::fmt::Display> From<ciborium::ser::Error<T>> for Error {
 impl Error {
     pub(crate) fn from_field(fieldname: String, val_err: ciborium::value::Error) -> Self {
         match val_err {
-            ciborium::value::Error::Custom(desc) => Error::InvalidField(fieldname, desc)
+            ciborium::value::Error::Custom(desc) => Error::InvalidField(fieldname, desc),
         }
     }
 }
