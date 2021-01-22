@@ -9,7 +9,6 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 use crate::{
     CoSWIDTag, EntityEntry, GlobalAttributes, LinkEntry, OneOrMany, PayloadOrEvidence,
     SoftwareMetaEntry, VersionScheme,
-    wire::reusable::{set_if_empty, require_field},
 };
 
 #[derive(Debug, Copy, Clone, Serialize_repr, Deserialize_repr, Hash, PartialEq, Eq)]
@@ -94,20 +93,19 @@ impl<'de> Deserialize<'de> for CoSWIDTag {
             where
                 V: MapAccess<'de>,
             {
-                let mut tag_id: Option<String> = None;
-                let mut tag_version: Option<i32> = None;
-                let mut corpus: Option<bool> = None;
-                let mut patch: Option<bool> = None;
-                let mut supplemental: Option<bool> = None;
-                let mut software_name: Option<String> = None;
-                let mut software_version: Option<String> = None;
-                let mut version_scheme: Option<VersionScheme> = None;
-                let mut media: Option<String> = None;
-                let mut software_meta: Option<OneOrMany<SoftwareMetaEntry>> = None;
-                let mut entity: Option<OneOrMany<EntityEntry>> = None;
-                let mut entity: Option<OneOrMany<EntityEntry>> = None;
-                let mut link: Option<OneOrMany<LinkEntry>> = None;
-                let mut payload_or_evidence: Option<PayloadOrEvidence> = None;
+                let mut tag_id = None;
+                let mut tag_version = None;
+                let mut corpus = None;
+                let mut patch = None;
+                let mut supplemental = None;
+                let mut software_name = None;
+                let mut software_version = None;
+                let mut version_scheme = None;
+                let mut media = None;
+                let mut software_meta = None;
+                let mut entity = None;
+                let mut link = None;
+                let mut payload_or_evidence = None;
                 let mut global_attributes = GlobalAttributes::new();
 
                 while let Some(key) = map.next_key::<TagIndex>()? {
@@ -139,8 +137,8 @@ impl<'de> Deserialize<'de> for CoSWIDTag {
                         TagIndex::Media => {
                             set_if_empty!(map, media);
                         }
-                        software_meta => {
-                            //set_if_empty!(map, software_meta);
+                        TagIndex::SoftwareMeta => {
+                            set_if_empty!(map, software_meta);
                         }
                         TagIndex::Entity => {
                             set_if_empty!(map, entity);
@@ -153,12 +151,16 @@ impl<'de> Deserialize<'de> for CoSWIDTag {
                                 return Err(de::Error::duplicate_field("payload-or-evidence"));
                             }
                             //payload_or_evidence = Some(PayloadOrEvidence::Payload(map.next_value()?));
+                            let value = map.next_value::<ciborium::value::Value>()?;
+                            println!("For key: {:?}, got val: {:?}", key, value);
                         }
                         TagIndex::Evidence => {
                             if payload_or_evidence.is_some() {
                                 return Err(de::Error::duplicate_field("payload-or-evidence"));
                             }
                             //payload_or_evidence = Some(PayloadOrEvidence::Evidence(map.next_value()?));
+                            let value = map.next_value::<ciborium::value::Value>()?;
+                            println!("For key: {:?}, got val: {:?}", key, value);
                         }
 
                         // Global Attributes
@@ -174,16 +176,16 @@ impl<'de> Deserialize<'de> for CoSWIDTag {
 
                 Ok(CoSWIDTag {
                     tag_id: require_field!(tag_id),
-                    tag_version: require_field!(tag_version)?,
+                    tag_version: require_field!(tag_version),
                     corpus,
                     patch,
                     supplemental,
-                    software_name: require_field!(software_name)?,
+                    software_name: require_field!(software_name),
                     software_version,
                     version_scheme,
                     media,
                     software_meta,
-                    entity: require_field!(entity)?,
+                    entity: require_field!(entity),
                     link,
                     payload_or_evidence,
                     global_attributes: global_attributes.get_none_or_some(),

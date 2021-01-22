@@ -8,7 +8,6 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::{
     LinkEntry,
-    wire::reusable::{set_if_empty, require_field},
 };
 
 #[derive(Debug, Copy, Clone, Serialize_repr, Deserialize_repr, Hash, PartialEq, Eq)]

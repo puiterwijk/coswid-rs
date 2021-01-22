@@ -203,7 +203,7 @@ pub enum GlobalAttributesKey {
 
 #[derive(Debug)]
 pub struct GlobalAttributes {
-    lang: Option<String>,
+    lang: Option<Text>,
     any_attribute: HashMap<u32, ciborium::value::Value>,
 }
 
@@ -242,6 +242,7 @@ pub enum OneOrMany<T> {
     Many(Vec<T>),
 }
 
+pub type Text = String;
 pub type AnyURI = String;
 
 // TODO
@@ -260,7 +261,7 @@ pub enum EntityRole {
 
 #[derive(Debug)]
 pub struct EntityEntry {
-    entity_name: String,
+    entity_name: Text,
     reg_id: Option<AnyURI>,
     role: OneOrMany<EntityRole>,
     thumbprint: Option<HashEntry>,
@@ -269,7 +270,23 @@ pub struct EntityEntry {
 }
 
 #[derive(Debug)]
-pub struct SoftwareMetaEntry {}
+pub struct SoftwareMetaEntry {
+    activation_status: Option<Text>,
+    channel_type: Option<Text>,
+    colloquial_version: Option<Text>,
+    description: Option<Text>,
+    edition: Option<Text>,
+    entitlement_data_required: Option<bool>,
+    entitlement_key: Option<Text>,
+    generator: Option<Text>,
+    persistent_id: Option<Text>,
+    product: Option<Text>,
+    product_family: Option<Text>,
+    revision: Option<Text>,
+    summary: Option<Text>,
+    unspsc_code: Option<Text>,
+    unspsc_version: Option<Text>,
+}
 
 #[derive(Debug, Serialize_repr, Deserialize_repr)]
 #[repr(u32)]
@@ -304,12 +321,12 @@ pub enum LinkUse {
 
 #[derive(Debug)]
 pub struct LinkEntry {
-    artifact: Option<String>,
+    artifact: Option<Text>,
     href: AnyURI,
-    media: Option<String>,
+    media: Option<Text>,
     ownership: Option<LinkOwnership>,
     rel: LinkRel,
-    media_type: Option<String>,
+    media_type: Option<Text>,
     link_use: Option<LinkUse>,
 }
 
@@ -332,10 +349,10 @@ pub struct CoSWIDTag {
     corpus: Option<bool>,
     patch: Option<bool>,
     supplemental: Option<bool>,
-    software_name: String,
-    software_version: Option<String>,
+    software_name: Text,
+    software_version: Option<Text>,
     version_scheme: Option<VersionScheme>,
-    media: Option<String>,
+    media: Option<Text>,
     software_meta: Option<OneOrMany<SoftwareMetaEntry>>,
     entity: OneOrMany<EntityEntry>,
     link: Option<OneOrMany<LinkEntry>>,

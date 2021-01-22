@@ -9,6 +9,6 @@ macro_rules! set_if_empty {
 
 macro_rules! require_field {
     ($field_name:ident) => {
-        $field_name.ok_or_else(|| de::Error::missing_field(stringify!(field_name))
+        $field_name.ok_or_else(|| de::Error::missing_field(stringify!(field_name)))?
     }
 }
