@@ -223,16 +223,12 @@ impl GlobalAttributes {
         }
     }
 
-    fn get_none_or_some(self) -> Option<Self> {
-        if self.is_empty() {
-            None
-        } else {
-            Some(self)
-        }
-    }
-
-    fn fill_value(&mut self, key: u32, value: ciborium::value::Value) {
+    fn fill_value(&mut self, key: u32, value: ciborium::value::Value) -> bool {
+        // TODO: Check for Lang
+        // TODO: Check if key is a global_attribute
         self.any_attribute.insert(key, value);
+
+        true
     }
 }
 
@@ -357,7 +353,7 @@ pub struct CoSWIDTag {
     entity: OneOrMany<EntityEntry>,
     link: Option<OneOrMany<LinkEntry>>,
     payload_or_evidence: Option<PayloadOrEvidence>,
-    global_attributes: Option<GlobalAttributes>,
+    global_attributes: GlobalAttributes,
     // coswid-extension
 }
 

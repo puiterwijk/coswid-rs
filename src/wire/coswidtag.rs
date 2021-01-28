@@ -29,50 +29,6 @@ enum TagIndex {
     TagVersion = 12,
     SoftwareVersion = 13,
     VersionScheme = 14,
-
-    // global-attributes
-    Lang = 15,
-    Directory = 16,
-    File = 17,
-    Process = 18,
-    Resource = 19,
-    Size = 20,
-    FileVersion = 21,
-    Key = 22,
-    Location = 23,
-    FsName = 24,
-    Root = 25,
-    PathElements = 26,
-    ProcessName = 27,
-    Pid = 28,
-    Type = 29,
-    EntityName = 31,
-    RegId = 32,
-    Role = 33,
-    Thumbprint = 34,
-    Date = 35,
-    DeviceID = 36,
-    Artifact = 37,
-    Href = 38,
-    Ownership = 39,
-    Rel = 40,
-    MediaType = 41,
-    Use = 42,
-    ActivationStatus = 43,
-    ChannelType = 44,
-    ColloquiaVersion = 45,
-    Description = 46,
-    Edition = 47,
-    EntitlementDataRequired = 48,
-    EntitlementKey = 49,
-    Generator = 50,
-    PersistentId = 51,
-    Product = 52,
-    ProductFamily = 53,
-    Revision = 54,
-    Summary = 55,
-    UnspscCode = 56,
-    UnspscVersion = 57,
 }
 
 impl<'de> Deserialize<'de> for CoSWIDTag {
@@ -164,9 +120,6 @@ impl<'de> Deserialize<'de> for CoSWIDTag {
                         }
 
                         // Global Attributes
-                        TagIndex::Lang => {
-                            global_attributes.lang = Some(map.next_value()?);
-                        }
                         key => {
                             let value = map.next_value::<ciborium::value::Value>()?;
                             global_attributes.fill_value(key as u32, value);
@@ -188,7 +141,7 @@ impl<'de> Deserialize<'de> for CoSWIDTag {
                     entity: require_field!(entity),
                     link,
                     payload_or_evidence,
-                    global_attributes: global_attributes.get_none_or_some(),
+                    global_attributes: require_field!(global_attributes),
                 })
             }
         }
