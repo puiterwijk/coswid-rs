@@ -39,8 +39,7 @@ pub(crate) fn impl_derive_serialize_cbor_map(input: TokenStream) -> TokenStream 
                     }
                 }
                 Some(CatchallType::Fields) => {
-                    // TODO
-                    panic!("CatchallType::Fields implementation");
+                    panic!("TODO: CatchallType::Fields implementation");
                 }
                 Some(CatchallType::Unknown) => {
                     quote! {

@@ -79,7 +79,6 @@ pub(crate) fn impl_derive_deserialize_cbor_map(input: TokenStream) -> TokenStrea
         let catchall_attr_matcher = match catchall_type {
             None => quote! {},
             Some(CatchallType::Fields) => {
-                // TODO
                 panic!("TODO: CatchallType::Fields implementation");
             }
             Some(CatchallType::Unknown) =>
