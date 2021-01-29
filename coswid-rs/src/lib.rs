@@ -245,10 +245,7 @@ pub enum OneOrMany<T> {
 pub type Text = String;
 pub type AnyURI = String;
 
-pub type HashEntry = (
-    u32,
-    Vec<u8>,
-);
+pub type HashEntry = (u32, Vec<u8>);
 
 #[derive(Debug, Serialize_repr, Deserialize_repr)]
 #[repr(u32)]

@@ -1,15 +1,11 @@
 use proc_macro::{TokenStream, TokenTree};
-use quote::{quote, quote_spanned};
+use quote::quote;
 use syn::{
-    parse_macro_input, parse_quote, punctuated::Punctuated, token, Attribute, Data, DeriveInput,
-    Field, Fields, GenericArgument, GenericParam, Generics, Index, Path, PathArguments,
-    PathSegment, Type, TypePath,
+    parse_macro_input, Attribute, Data, DeriveInput, Fields, GenericArgument, Path, PathArguments,
+    Type, TypePath,
 };
 
-use crate::{
-    CatchallType,
-    utils::list_to_tuple,
-};
+use crate::{utils::list_to_tuple, CatchallType};
 
 pub(crate) fn impl_derive_deserialize_cbor_map(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
