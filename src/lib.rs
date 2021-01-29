@@ -255,7 +255,35 @@ pub enum OneOrMany<T> {
 pub type Text = String;
 pub type AnyURI = String;
 
-pub type HashEntry = (u32, Vec<u8>);
+// https://www.iana.org/assignments/named-information/named-information.xhtml
+#[derive(Debug, Serialize_repr, Deserialize_repr)]
+#[repr(u32)]
+pub enum HashAlgorithm {
+    Unknown = 0,
+    Sha256 = 1,
+    Sha256_128 = 2,
+    Sha256_120 = 3,
+    Sha256_96 = 4,
+    Sha256_64 = 5,
+    Sha256_32 = 6,
+    Sha384 = 7,
+    Sha512 = 8,
+    Sha3_224 = 9,
+    Sha3_256 = 10,
+    Sha3_384 = 11,
+    Sha3_512 = 12,
+}
+
+impl Default for HashAlgorithm {
+    fn default() -> Self {
+        HashAlgorithm::Unknown
+    }
+}
+
+pub type HashEntry = (
+    HashAlgorithm,
+    Vec<u8>
+);
 
 #[derive(Debug, Serialize_repr, Deserialize_repr)]
 #[repr(u32)]
