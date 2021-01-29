@@ -27,7 +27,10 @@ enum CatchallType {
     Unknown,
 }
 
-#[proc_macro_derive(Deserialize_CBOR_Map, attributes(serde, cbor_map_id, cbor_map_fields, cbor_map_unknown))]
+#[proc_macro_derive(
+    Deserialize_CBOR_Map,
+    attributes(serde, cbor_map_id, cbor_map_fields, cbor_map_unknown)
+)]
 pub fn derive_deserialize_cbor_map(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     let ident = input.ident;
@@ -170,7 +173,8 @@ pub fn derive_deserialize_cbor_map(input: TokenStream) -> TokenStream {
         (attr_placeholder, attr_matcher, catchall_attr_matcher, attr_installer)
     })
     .collect::<Vec<(_, _, _, _)>>();
-    let (attr_placeholders, attr_matchers, catchall_attr_matchers, attr_installers) = list_to_tuple(quotes_list);
+    let (attr_placeholders, attr_matchers, catchall_attr_matchers, attr_installers) =
+        list_to_tuple(quotes_list);
 
     let mut attr_matchers = attr_matchers;
     // Add the catchall entry
@@ -205,8 +209,8 @@ pub fn derive_deserialize_cbor_map(input: TokenStream) -> TokenStream {
                     {
                         #(#attr_placeholders)*
 
-                        while let Some(key) = map.next_key::<u32>()? {
-                            match key {
+                        while let Some(_cbor_map_key) = map.next_key::<u32>()? {
+                            match _cbor_map_key {
                                 #(#attr_matchers)*
                             }
                         }
@@ -222,6 +226,8 @@ pub fn derive_deserialize_cbor_map(input: TokenStream) -> TokenStream {
         }
     });
 
-    println!("Tokenstream: {}", res);
+    if ident.to_string() == "SomeStruct" {
+        println!("Tokenstream: {}", res);
+    }
     res
 }

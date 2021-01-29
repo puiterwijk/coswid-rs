@@ -5,7 +5,7 @@ use std::convert::TryFrom;
 
 mod manual_serde;
 
-use num_enum::{TryFromPrimitive, IntoPrimitive};
+use num_enum::{IntoPrimitive, TryFromPrimitive};
 use serde_cbor_map::Deserialize_CBOR_Map;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
@@ -157,7 +157,9 @@ pub enum VersionScheme {
     Semver = 16384,
 }
 
-#[derive(Debug, Serialize_repr, Deserialize_repr, PartialEq, Eq, Hash, TryFromPrimitive, IntoPrimitive)]
+#[derive(
+    Debug, Serialize_repr, Deserialize_repr, PartialEq, Eq, Hash, TryFromPrimitive, IntoPrimitive,
+)]
 #[repr(u32)]
 pub enum GlobalAttributesKey {
     Lang = 15,
@@ -218,13 +220,11 @@ impl GlobalAttributes {
     }
 
     pub fn get_value(&self, key: GlobalAttributesKey) -> Option<&ciborium::value::Value> {
-        unsafe {
-            self.get_raw_value(key.into())
-        }
+        unsafe { self.get_raw_value(key.into()) }
     }
 
     pub unsafe fn get_raw_value(&self, key: u32) -> Option<&ciborium::value::Value> {
-        return self.any_attribute.get(&key)
+        return self.any_attribute.get(&key);
     }
 
     fn handles_key(&self, key: u32) -> bool {
@@ -245,8 +245,10 @@ pub enum OneOrMany<T> {
 pub type Text = String;
 pub type AnyURI = String;
 
-// TODO
-pub type HashEntry = String;
+pub type HashEntry = (
+    u32,
+    Vec<u8>,
+);
 
 #[derive(Debug, Serialize_repr, Deserialize_repr)]
 #[repr(u32)]
@@ -359,15 +361,74 @@ pub struct LinkEntry {
     link_use: Option<LinkUse>,
 }
 
-#[derive(Debug)]
-pub struct ResourceCollection {
+#[derive(Debug, Deserialize_CBOR_Map)]
+pub struct DirectoryEntry {
+    // filesystem-item
+    #[cbor_map_id(22)]
+    key: Option<bool>,
+    #[cbor_map_id(23)]
+    location: Option<Text>,
+    #[cbor_map_id(24)]
+    fs_name: Text,
+    #[cbor_map_id(25)]
+    root: Text,
+    // global-attributes
+    #[cbor_map_unknown]
+    global_attributes: GlobalAttributes,
+}
 
+#[derive(Debug, Deserialize_CBOR_Map)]
+pub struct FileEntry {
+    // filesystem-item
+    #[cbor_map_id(22)]
+    key: Option<bool>,
+    #[cbor_map_id(23)]
+    location: Option<Text>,
+    #[cbor_map_id(24)]
+    fs_name: Text,
+    #[cbor_map_id(25)]
+    root: Text,
+    // rest
+    #[cbor_map_id(20)]
+    size: Option<u128>,
+    #[cbor_map_id(21)]
+    file_version: Option<Text>,
+    #[cbor_map_id(7)]
+    hash: Option<HashEntry>,
+}
+
+#[derive(Debug, Deserialize_CBOR_Map)]
+pub struct ProcessEntry {
+    #[cbor_map_id(27)]
+    process_name: Text,
+    #[cbor_map_id(28)]
+    pid: u32,
+    // global-attributes
+    #[cbor_map_unknown]
+    global_attributes: GlobalAttributes,
+}
+
+#[derive(Debug, Deserialize_CBOR_Map)]
+pub struct ResourceEntry {
+    #[cbor_map_id(29)]
+    _type: Text,
+    // global-attributes
+    #[cbor_map_unknown]
+    global_attributes: GlobalAttributes,
 }
 
 #[derive(Debug, Deserialize_CBOR_Map)]
 pub struct PayloadEntry {
-    #[cbor_map_fields]
-    resource_collection: ResourceCollection,
+    // resource-collection
+    #[cbor_map_id(16)]
+    directory: Option<OneOrMany<DirectoryEntry>>,
+    #[cbor_map_id(17)]
+    file: Option<OneOrMany<FileEntry>>,
+    #[cbor_map_id(18)]
+    process: Option<OneOrMany<ProcessEntry>>,
+    #[cbor_map_id(19)]
+    resource: Option<OneOrMany<ResourceEntry>>,
+    // rest
     #[cbor_map_unknown]
     global_attributes: GlobalAttributes,
 }
@@ -377,8 +438,16 @@ type Time = String;
 
 #[derive(Debug, Deserialize_CBOR_Map)]
 pub struct EvidenceEntry {
-    #[cbor_map_fields]
-    resource_collection: ResourceCollection,
+    // resource-collection
+    #[cbor_map_id(16)]
+    directory: Option<OneOrMany<DirectoryEntry>>,
+    #[cbor_map_id(17)]
+    file: Option<OneOrMany<FileEntry>>,
+    #[cbor_map_id(18)]
+    process: Option<OneOrMany<ProcessEntry>>,
+    #[cbor_map_id(19)]
+    resource: Option<OneOrMany<ResourceEntry>>,
+    // rest
     #[cbor_map_id(35)]
     date: Time,
     #[cbor_map_id(36)]
