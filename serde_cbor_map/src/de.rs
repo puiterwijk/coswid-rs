@@ -1,7 +1,7 @@
-use proc_macro::{TokenStream, TokenTree};
+use proc_macro::TokenStream;
 use quote::quote;
 use syn::{
-    parse_macro_input, Attribute, Data, DeriveInput, Fields, GenericArgument, Path, PathArguments,
+    parse_macro_input, Data, DeriveInput, Fields, GenericArgument, Path, PathArguments,
     Type, TypePath,
 };
 

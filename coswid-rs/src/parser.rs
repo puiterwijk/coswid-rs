@@ -3,7 +3,7 @@ use coswid::CoSWIDTag;
 use std::env;
 use std::fs::File;
 
-fn main() -> Result<(), Box<std::error::Error>> {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<String> = env::args().collect();
 
     if args.len() != 2 {
@@ -19,7 +19,7 @@ fn main() -> Result<(), Box<std::error::Error>> {
     ciborium::ser::into_writer(&parsed, &mut rebuilt)?;
     println!("Rebuilt cbor: {:?}", rebuilt);
 
-    let mut rebuilt = serde_json::to_string(&parsed)?;
+    let rebuilt = serde_json::to_string(&parsed)?;
     println!("Rebuilt JSON: {:?}", rebuilt);
 
     Ok(())

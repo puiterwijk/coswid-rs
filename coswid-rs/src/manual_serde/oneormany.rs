@@ -7,6 +7,18 @@ use serde::{
 
 use crate::OneOrMany;
 
+impl<T: Serialize> Serialize for OneOrMany<T> {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        match self {
+            OneOrMany::One(item) => item.serialize(serializer),
+            OneOrMany::Many(list) => list.serialize(serializer),
+        }
+    }
+}
+
 impl<'de, T: Deserialize<'de>> Deserialize<'de> for OneOrMany<T> {
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where

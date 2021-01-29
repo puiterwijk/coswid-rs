@@ -225,7 +225,15 @@ impl GlobalAttributes {
         return self.any_attribute.get(&key);
     }
 
-    fn handles_key(&self, key: u32) -> bool {
+    fn num_items(&self) -> usize {
+        self.any_attribute.len()
+    }
+
+    fn iter(&self) -> std::collections::hash_map::Iter<u32, ciborium::value::Value> {
+        self.any_attribute.iter()
+    }
+
+    fn handles_key(&self, _key: u32) -> bool {
         true
     }
 
