@@ -1,12 +1,10 @@
-mod error;
-pub use error::{Error, Result};
 use std::collections::HashMap;
 use std::convert::TryFrom;
 
 mod manual_serde;
 
 use num_enum::{IntoPrimitive, TryFromPrimitive};
-use serde_cbor_map::Deserialize_CBOR_Map;
+use serde_cbor_map::{Deserialize_CBOR_Map, Serialize_CBOR_Map};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 /*
@@ -258,7 +256,7 @@ pub enum EntityRole {
     Maintainer = 6,
 }
 
-#[derive(Debug, Deserialize_CBOR_Map)]
+#[derive(Debug, Deserialize_CBOR_Map, Serialize_CBOR_Map)]
 pub struct EntityEntry {
     #[cbor_map_id(31)]
     entity_name: Text,
@@ -273,7 +271,7 @@ pub struct EntityEntry {
     // * $$ entity-extension
 }
 
-#[derive(Debug, Deserialize_CBOR_Map)]
+#[derive(Debug, Deserialize_CBOR_Map, Serialize_CBOR_Map)]
 pub struct SoftwareMetaEntry {
     #[cbor_map_id(43)]
     activation_status: Option<Text>,
@@ -340,7 +338,7 @@ pub enum LinkUse {
     Recommended = 3,
 }
 
-#[derive(Debug, Deserialize_CBOR_Map)]
+#[derive(Debug, Deserialize_CBOR_Map, Serialize_CBOR_Map)]
 pub struct LinkEntry {
     #[cbor_map_id(37)]
     artifact: Option<Text>,
@@ -358,7 +356,7 @@ pub struct LinkEntry {
     link_use: Option<LinkUse>,
 }
 
-#[derive(Debug, Deserialize_CBOR_Map)]
+#[derive(Debug, Deserialize_CBOR_Map, Serialize_CBOR_Map)]
 pub struct DirectoryEntry {
     // filesystem-item
     #[cbor_map_id(22)]
@@ -374,7 +372,7 @@ pub struct DirectoryEntry {
     global_attributes: GlobalAttributes,
 }
 
-#[derive(Debug, Deserialize_CBOR_Map)]
+#[derive(Debug, Deserialize_CBOR_Map, Serialize_CBOR_Map)]
 pub struct FileEntry {
     // filesystem-item
     #[cbor_map_id(22)]
@@ -394,7 +392,7 @@ pub struct FileEntry {
     hash: Option<HashEntry>,
 }
 
-#[derive(Debug, Deserialize_CBOR_Map)]
+#[derive(Debug, Deserialize_CBOR_Map, Serialize_CBOR_Map)]
 pub struct ProcessEntry {
     #[cbor_map_id(27)]
     process_name: Text,
@@ -405,7 +403,7 @@ pub struct ProcessEntry {
     global_attributes: GlobalAttributes,
 }
 
-#[derive(Debug, Deserialize_CBOR_Map)]
+#[derive(Debug, Deserialize_CBOR_Map, Serialize_CBOR_Map)]
 pub struct ResourceEntry {
     #[cbor_map_id(29)]
     _type: Text,
@@ -414,7 +412,7 @@ pub struct ResourceEntry {
     global_attributes: GlobalAttributes,
 }
 
-#[derive(Debug, Deserialize_CBOR_Map)]
+#[derive(Debug, Deserialize_CBOR_Map, Serialize_CBOR_Map)]
 pub struct PayloadEntry {
     // resource-collection
     #[cbor_map_id(16)]
@@ -433,7 +431,7 @@ pub struct PayloadEntry {
 // TODO
 type Time = String;
 
-#[derive(Debug, Deserialize_CBOR_Map)]
+#[derive(Debug, Deserialize_CBOR_Map, Serialize_CBOR_Map)]
 pub struct EvidenceEntry {
     // resource-collection
     #[cbor_map_id(16)]
@@ -453,7 +451,7 @@ pub struct EvidenceEntry {
     global_attributes: GlobalAttributes,
 }
 
-#[derive(Debug, Deserialize_CBOR_Map)]
+#[derive(Debug, Deserialize_CBOR_Map, Serialize_CBOR_Map)]
 pub struct CoSWIDTag {
     #[cbor_map_id(0)]
     tag_id: String,
