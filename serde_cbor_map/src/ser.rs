@@ -73,8 +73,9 @@ pub(crate) fn impl_derive_serialize_cbor_map(input: TokenStream) -> TokenStream 
             }
         }
     });
-    if ident.to_string() == "CoSWIDTag" {
-        println!("Tokenstream: {}", res);
-    }
+
+    #[cfg(feature = "print_tokenstreams")]
+    println!("Serialization tokenstream for {}: {}", ident, res);
+
     res
 }

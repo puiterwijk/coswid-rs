@@ -156,8 +156,8 @@ pub(crate) fn impl_derive_deserialize_cbor_map(input: TokenStream) -> TokenStrea
         }
     });
 
-    if ident.to_string() == "SomeStruct" {
-        println!("Tokenstream: {}", res);
-    }
+    #[cfg(feature = "print_tokenstreams")]
+    println!("Deserialization tokenstream for {}: {}", ident, res);
+
     res
 }
