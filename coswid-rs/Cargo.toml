@@ -15,5 +15,6 @@ serde = { version = "1.0", features = ["derive"] }
 serde_repr = "0.1"
 ciborium = { version = "0.1.0", features = ["std"] }
 num_enum = "0.5.1"
+serde_json = "1.0.61"
 
 serde_cbor_map = { path = "../serde_cbor_map" }

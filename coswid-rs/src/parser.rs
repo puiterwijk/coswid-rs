@@ -14,13 +14,14 @@ fn main() -> Result<(), Box<std::error::Error>> {
 
     let reader = File::open(&args[1]).unwrap();
     let parsed: CoSWIDTag = ciborium::de::from_reader(&reader)?;
-
     println!("Parsed CoSWID: {:?}", parsed);
 
-    let mut writer = Vec::new();
-    let rebuilt = ciborium::ser::into_writer(&parsed, &mut writer)?;
+    let mut rebuilt = Vec::new();
+    ciborium::ser::into_writer(&parsed, &mut rebuilt)?;
+    println!("Rebuilt cbor: {:?}", rebuilt);
 
-    println!("Target: {:?}", writer);
+    let mut rebuilt = serde_json::to_string(&parsed)?;
+    println!("Rebuilt JSON: {:?}", rebuilt);
 
     Ok(())
 }
