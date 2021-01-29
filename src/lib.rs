@@ -142,10 +142,7 @@ impl Default for HashAlgorithm {
     }
 }
 
-pub type HashEntry = (
-    HashAlgorithm,
-    Vec<u8>
-);
+pub type HashEntry = (HashAlgorithm, Vec<u8>);
 
 #[derive(Debug, Serialize_repr, Deserialize_repr)]
 #[repr(u32)]
@@ -161,52 +158,52 @@ pub enum EntityRole {
 #[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct EntityEntry {
     #[int_map_id(31)]
-    entity_name: Text,
+    pub entity_name: Text,
     #[int_map_id(32)]
-    reg_id: Option<AnyURI>,
+    pub reg_id: Option<AnyURI>,
     #[int_map_id(33)]
-    role: OneOrMany<EntityRole>,
+    pub role: OneOrMany<EntityRole>,
     #[int_map_id(34)]
-    thumbprint: Option<HashEntry>,
+    pub thumbprint: Option<HashEntry>,
     #[int_map_unknown]
-    global_attributes: GlobalAttributes,
+    pub global_attributes: GlobalAttributes,
     // * $$ entity-extension
 }
 
 #[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct SoftwareMetaEntry {
     #[int_map_id(43)]
-    activation_status: Option<Text>,
+    pub activation_status: Option<Text>,
     #[int_map_id(44)]
-    channel_type: Option<Text>,
+    pub channel_type: Option<Text>,
     #[int_map_id(45)]
-    colloquial_version: Option<Text>,
+    pub colloquial_version: Option<Text>,
     #[int_map_id(46)]
-    description: Option<Text>,
+    pub description: Option<Text>,
     #[int_map_id(47)]
-    edition: Option<Text>,
+    pub edition: Option<Text>,
     #[int_map_id(48)]
-    entitlement_data_required: Option<bool>,
+    pub entitlement_data_required: Option<bool>,
     #[int_map_id(49)]
-    entitlement_key: Option<Text>,
+    pub entitlement_key: Option<Text>,
     #[int_map_id(50)]
-    generator: Option<Text>,
+    pub generator: Option<Text>,
     #[int_map_id(51)]
-    persistent_id: Option<Text>,
+    pub persistent_id: Option<Text>,
     #[int_map_id(52)]
-    product: Option<Text>,
+    pub product: Option<Text>,
     #[int_map_id(53)]
-    product_family: Option<Text>,
+    pub product_family: Option<Text>,
     #[int_map_id(54)]
-    revision: Option<Text>,
+    pub revision: Option<Text>,
     #[int_map_id(55)]
-    summary: Option<Text>,
+    pub summary: Option<Text>,
     #[int_map_id(56)]
-    unspsc_code: Option<Text>,
+    pub unspsc_code: Option<Text>,
     #[int_map_id(57)]
-    unspsc_version: Option<Text>,
+    pub unspsc_version: Option<Text>,
     #[int_map_unknown]
-    global_attributes: GlobalAttributes,
+    pub global_attributes: GlobalAttributes,
 }
 
 #[derive(Debug, Serialize_repr, Deserialize_repr)]
@@ -243,147 +240,147 @@ pub enum LinkUse {
 #[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct LinkEntry {
     #[int_map_id(37)]
-    artifact: Option<Text>,
+    pub artifact: Option<Text>,
     #[int_map_id(38)]
-    href: AnyURI,
+    pub href: AnyURI,
     #[int_map_id(10)]
-    media: Option<Text>,
+    pub media: Option<Text>,
     #[int_map_id(39)]
-    ownership: Option<LinkOwnership>,
+    pub ownership: Option<LinkOwnership>,
     #[int_map_id(40)]
-    rel: LinkRel,
+    pub rel: LinkRel,
     #[int_map_id(41)]
-    media_type: Option<Text>,
+    pub media_type: Option<Text>,
     #[int_map_id(42)]
-    link_use: Option<LinkUse>,
+    pub link_use: Option<LinkUse>,
 }
 
 #[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct DirectoryEntry {
     // filesystem-item
     #[int_map_id(22)]
-    key: Option<bool>,
+    pub key: Option<bool>,
     #[int_map_id(23)]
-    location: Option<Text>,
+    pub location: Option<Text>,
     #[int_map_id(24)]
-    fs_name: Text,
+    pub fs_name: Text,
     #[int_map_id(25)]
-    root: Text,
+    pub root: Text,
     // global-attributes
     #[int_map_unknown]
-    global_attributes: GlobalAttributes,
+    pub global_attributes: GlobalAttributes,
 }
 
 #[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct FileEntry {
     // filesystem-item
     #[int_map_id(22)]
-    key: Option<bool>,
+    pub key: Option<bool>,
     #[int_map_id(23)]
-    location: Option<Text>,
+    pub location: Option<Text>,
     #[int_map_id(24)]
-    fs_name: Text,
+    pub fs_name: Text,
     #[int_map_id(25)]
-    root: Text,
+    pub root: Text,
     // rest
     #[int_map_id(20)]
-    size: Option<u128>,
+    pub size: Option<u128>,
     #[int_map_id(21)]
-    file_version: Option<Text>,
+    pub file_version: Option<Text>,
     #[int_map_id(7)]
-    hash: Option<HashEntry>,
+    pub hash: Option<HashEntry>,
 }
 
 #[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct ProcessEntry {
     #[int_map_id(27)]
-    process_name: Text,
+    pub process_name: Text,
     #[int_map_id(28)]
-    pid: u32,
+    pub pid: u32,
     // global-attributes
     #[int_map_unknown]
-    global_attributes: GlobalAttributes,
+    pub global_attributes: GlobalAttributes,
 }
 
 #[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct ResourceEntry {
     #[int_map_id(29)]
-    _type: Text,
+    pub type_: Text,
     // global-attributes
     #[int_map_unknown]
-    global_attributes: GlobalAttributes,
+    pub global_attributes: GlobalAttributes,
 }
 
 #[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct PayloadEntry {
     // resource-collection
     #[int_map_id(16)]
-    directory: Option<OneOrMany<DirectoryEntry>>,
+    pub directory: Option<OneOrMany<DirectoryEntry>>,
     #[int_map_id(17)]
-    file: Option<OneOrMany<FileEntry>>,
+    pub file: Option<OneOrMany<FileEntry>>,
     #[int_map_id(18)]
-    process: Option<OneOrMany<ProcessEntry>>,
+    pub process: Option<OneOrMany<ProcessEntry>>,
     #[int_map_id(19)]
-    resource: Option<OneOrMany<ResourceEntry>>,
+    pub resource: Option<OneOrMany<ResourceEntry>>,
     // rest
     #[int_map_unknown]
-    global_attributes: GlobalAttributes,
+    pub global_attributes: GlobalAttributes,
 }
 
 // TODO
-type Time = String;
+pub type Time = String;
 
 #[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct EvidenceEntry {
     // resource-collection
     #[int_map_id(16)]
-    directory: Option<OneOrMany<DirectoryEntry>>,
+    pub directory: Option<OneOrMany<DirectoryEntry>>,
     #[int_map_id(17)]
-    file: Option<OneOrMany<FileEntry>>,
+    pub file: Option<OneOrMany<FileEntry>>,
     #[int_map_id(18)]
-    process: Option<OneOrMany<ProcessEntry>>,
+    pub process: Option<OneOrMany<ProcessEntry>>,
     #[int_map_id(19)]
-    resource: Option<OneOrMany<ResourceEntry>>,
+    pub resource: Option<OneOrMany<ResourceEntry>>,
     // rest
     #[int_map_id(35)]
-    date: Time,
+    pub date: Time,
     #[int_map_id(36)]
-    device_id: Text,
+    pub device_id: Text,
     #[int_map_unknown]
-    global_attributes: GlobalAttributes,
+    pub global_attributes: GlobalAttributes,
 }
 
 #[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct CoSWIDTag {
     #[int_map_id(0)]
-    tag_id: String,
+    pub tag_id: String,
     #[int_map_id(12)]
-    tag_version: i32,
+    pub tag_version: i32,
     #[int_map_id(8)]
-    corpus: Option<bool>,
+    pub corpus: Option<bool>,
     #[int_map_id(9)]
-    patch: Option<bool>,
+    pub patch: Option<bool>,
     #[int_map_id(11)]
-    supplemental: Option<bool>,
+    pub supplemental: Option<bool>,
     #[int_map_id(1)]
-    software_name: Text,
+    pub software_name: Text,
     #[int_map_id(13)]
-    software_version: Option<Text>,
+    pub software_version: Option<Text>,
     #[int_map_id(14)]
-    version_scheme: Option<VersionScheme>,
+    pub version_scheme: Option<VersionScheme>,
     #[int_map_id(10)]
-    media: Option<Text>,
+    pub media: Option<Text>,
     #[int_map_id(5)]
-    software_meta: Option<OneOrMany<SoftwareMetaEntry>>,
+    pub software_meta: Option<OneOrMany<SoftwareMetaEntry>>,
     #[int_map_id(2)]
-    entity: OneOrMany<EntityEntry>,
+    pub entity: OneOrMany<EntityEntry>,
     #[int_map_id(4)]
-    link: Option<OneOrMany<LinkEntry>>,
+    pub link: Option<OneOrMany<LinkEntry>>,
     #[int_map_id(6)]
-    payload: Option<PayloadEntry>,
+    pub payload: Option<PayloadEntry>,
     #[int_map_id(3)]
-    evidence: Option<EvidenceEntry>,
+    pub evidence: Option<EvidenceEntry>,
     #[int_map_unknown]
-    global_attributes: GlobalAttributes,
+    pub global_attributes: GlobalAttributes,
     // coswid-extension
 }
