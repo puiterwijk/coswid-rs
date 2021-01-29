@@ -3,7 +3,8 @@ use std::collections::HashMap;
 mod manual_serde;
 
 use num_enum::{IntoPrimitive, TryFromPrimitive};
-use serde_cbor_map::{Deserialize_CBOR_Map, Serialize_CBOR_Map};
+use serde_int_map::UnknownKeyHandler;
+use serde_int_map_derive::{Deserialize_Int_Map, Serialize_Int_Map};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 /*
@@ -209,19 +210,24 @@ pub struct GlobalAttributes {
 }
 
 impl GlobalAttributes {
-    fn new() -> Self {
-        GlobalAttributes {
-            //lang: None,
-            any_attribute: HashMap::new(),
-        }
-    }
-
     pub fn get_value(&self, key: GlobalAttributesKey) -> Option<&ciborium::value::Value> {
         unsafe { self.get_raw_value(key.into()) }
     }
 
     pub unsafe fn get_raw_value(&self, key: u32) -> Option<&ciborium::value::Value> {
         return self.any_attribute.get(&key);
+    }
+
+}
+
+impl UnknownKeyHandler for GlobalAttributes {
+    type ValueType = ciborium::value::Value;
+
+    fn new() -> Self {
+        GlobalAttributes {
+            //lang: None,
+            any_attribute: HashMap::new(),
+        }
     }
 
     fn num_items(&self) -> usize {
@@ -236,7 +242,7 @@ impl GlobalAttributes {
         true
     }
 
-    fn fill_value(&mut self, key: u32, value: ciborium::value::Value) {
+    fn fill_value(&mut self, key: u32, value: Self::ValueType) {
         self.any_attribute.insert(key, value);
     }
 }
@@ -263,54 +269,54 @@ pub enum EntityRole {
     Maintainer = 6,
 }
 
-#[derive(Debug, Deserialize_CBOR_Map, Serialize_CBOR_Map)]
+#[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct EntityEntry {
-    #[cbor_map_id(31)]
+    #[int_map_id(31)]
     entity_name: Text,
-    #[cbor_map_id(32)]
+    #[int_map_id(32)]
     reg_id: Option<AnyURI>,
-    #[cbor_map_id(33)]
+    #[int_map_id(33)]
     role: OneOrMany<EntityRole>,
-    #[cbor_map_id(34)]
+    #[int_map_id(34)]
     thumbprint: Option<HashEntry>,
-    #[cbor_map_unknown]
+    #[int_map_unknown]
     global_attributes: GlobalAttributes,
     // * $$ entity-extension
 }
 
-#[derive(Debug, Deserialize_CBOR_Map, Serialize_CBOR_Map)]
+#[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct SoftwareMetaEntry {
-    #[cbor_map_id(43)]
+    #[int_map_id(43)]
     activation_status: Option<Text>,
-    #[cbor_map_id(44)]
+    #[int_map_id(44)]
     channel_type: Option<Text>,
-    #[cbor_map_id(45)]
+    #[int_map_id(45)]
     colloquial_version: Option<Text>,
-    #[cbor_map_id(46)]
+    #[int_map_id(46)]
     description: Option<Text>,
-    #[cbor_map_id(47)]
+    #[int_map_id(47)]
     edition: Option<Text>,
-    #[cbor_map_id(48)]
+    #[int_map_id(48)]
     entitlement_data_required: Option<bool>,
-    #[cbor_map_id(49)]
+    #[int_map_id(49)]
     entitlement_key: Option<Text>,
-    #[cbor_map_id(50)]
+    #[int_map_id(50)]
     generator: Option<Text>,
-    #[cbor_map_id(51)]
+    #[int_map_id(51)]
     persistent_id: Option<Text>,
-    #[cbor_map_id(52)]
+    #[int_map_id(52)]
     product: Option<Text>,
-    #[cbor_map_id(53)]
+    #[int_map_id(53)]
     product_family: Option<Text>,
-    #[cbor_map_id(54)]
+    #[int_map_id(54)]
     revision: Option<Text>,
-    #[cbor_map_id(55)]
+    #[int_map_id(55)]
     summary: Option<Text>,
-    #[cbor_map_id(56)]
+    #[int_map_id(56)]
     unspsc_code: Option<Text>,
-    #[cbor_map_id(57)]
+    #[int_map_id(57)]
     unspsc_version: Option<Text>,
-    #[cbor_map_unknown]
+    #[int_map_unknown]
     global_attributes: GlobalAttributes,
 }
 
@@ -345,150 +351,150 @@ pub enum LinkUse {
     Recommended = 3,
 }
 
-#[derive(Debug, Deserialize_CBOR_Map, Serialize_CBOR_Map)]
+#[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct LinkEntry {
-    #[cbor_map_id(37)]
+    #[int_map_id(37)]
     artifact: Option<Text>,
-    #[cbor_map_id(38)]
+    #[int_map_id(38)]
     href: AnyURI,
-    #[cbor_map_id(10)]
+    #[int_map_id(10)]
     media: Option<Text>,
-    #[cbor_map_id(39)]
+    #[int_map_id(39)]
     ownership: Option<LinkOwnership>,
-    #[cbor_map_id(40)]
+    #[int_map_id(40)]
     rel: LinkRel,
-    #[cbor_map_id(41)]
+    #[int_map_id(41)]
     media_type: Option<Text>,
-    #[cbor_map_id(42)]
+    #[int_map_id(42)]
     link_use: Option<LinkUse>,
 }
 
-#[derive(Debug, Deserialize_CBOR_Map, Serialize_CBOR_Map)]
+#[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct DirectoryEntry {
     // filesystem-item
-    #[cbor_map_id(22)]
+    #[int_map_id(22)]
     key: Option<bool>,
-    #[cbor_map_id(23)]
+    #[int_map_id(23)]
     location: Option<Text>,
-    #[cbor_map_id(24)]
+    #[int_map_id(24)]
     fs_name: Text,
-    #[cbor_map_id(25)]
+    #[int_map_id(25)]
     root: Text,
     // global-attributes
-    #[cbor_map_unknown]
+    #[int_map_unknown]
     global_attributes: GlobalAttributes,
 }
 
-#[derive(Debug, Deserialize_CBOR_Map, Serialize_CBOR_Map)]
+#[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct FileEntry {
     // filesystem-item
-    #[cbor_map_id(22)]
+    #[int_map_id(22)]
     key: Option<bool>,
-    #[cbor_map_id(23)]
+    #[int_map_id(23)]
     location: Option<Text>,
-    #[cbor_map_id(24)]
+    #[int_map_id(24)]
     fs_name: Text,
-    #[cbor_map_id(25)]
+    #[int_map_id(25)]
     root: Text,
     // rest
-    #[cbor_map_id(20)]
+    #[int_map_id(20)]
     size: Option<u128>,
-    #[cbor_map_id(21)]
+    #[int_map_id(21)]
     file_version: Option<Text>,
-    #[cbor_map_id(7)]
+    #[int_map_id(7)]
     hash: Option<HashEntry>,
 }
 
-#[derive(Debug, Deserialize_CBOR_Map, Serialize_CBOR_Map)]
+#[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct ProcessEntry {
-    #[cbor_map_id(27)]
+    #[int_map_id(27)]
     process_name: Text,
-    #[cbor_map_id(28)]
+    #[int_map_id(28)]
     pid: u32,
     // global-attributes
-    #[cbor_map_unknown]
+    #[int_map_unknown]
     global_attributes: GlobalAttributes,
 }
 
-#[derive(Debug, Deserialize_CBOR_Map, Serialize_CBOR_Map)]
+#[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct ResourceEntry {
-    #[cbor_map_id(29)]
+    #[int_map_id(29)]
     _type: Text,
     // global-attributes
-    #[cbor_map_unknown]
+    #[int_map_unknown]
     global_attributes: GlobalAttributes,
 }
 
-#[derive(Debug, Deserialize_CBOR_Map, Serialize_CBOR_Map)]
+#[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct PayloadEntry {
     // resource-collection
-    #[cbor_map_id(16)]
+    #[int_map_id(16)]
     directory: Option<OneOrMany<DirectoryEntry>>,
-    #[cbor_map_id(17)]
+    #[int_map_id(17)]
     file: Option<OneOrMany<FileEntry>>,
-    #[cbor_map_id(18)]
+    #[int_map_id(18)]
     process: Option<OneOrMany<ProcessEntry>>,
-    #[cbor_map_id(19)]
+    #[int_map_id(19)]
     resource: Option<OneOrMany<ResourceEntry>>,
     // rest
-    #[cbor_map_unknown]
+    #[int_map_unknown]
     global_attributes: GlobalAttributes,
 }
 
 // TODO
 type Time = String;
 
-#[derive(Debug, Deserialize_CBOR_Map, Serialize_CBOR_Map)]
+#[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct EvidenceEntry {
     // resource-collection
-    #[cbor_map_id(16)]
+    #[int_map_id(16)]
     directory: Option<OneOrMany<DirectoryEntry>>,
-    #[cbor_map_id(17)]
+    #[int_map_id(17)]
     file: Option<OneOrMany<FileEntry>>,
-    #[cbor_map_id(18)]
+    #[int_map_id(18)]
     process: Option<OneOrMany<ProcessEntry>>,
-    #[cbor_map_id(19)]
+    #[int_map_id(19)]
     resource: Option<OneOrMany<ResourceEntry>>,
     // rest
-    #[cbor_map_id(35)]
+    #[int_map_id(35)]
     date: Time,
-    #[cbor_map_id(36)]
+    #[int_map_id(36)]
     device_id: Text,
-    #[cbor_map_unknown]
+    #[int_map_unknown]
     global_attributes: GlobalAttributes,
 }
 
-#[derive(Debug, Deserialize_CBOR_Map, Serialize_CBOR_Map)]
+#[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct CoSWIDTag {
-    #[cbor_map_id(0)]
+    #[int_map_id(0)]
     tag_id: String,
-    #[cbor_map_id(12)]
+    #[int_map_id(12)]
     tag_version: i32,
-    #[cbor_map_id(8)]
+    #[int_map_id(8)]
     corpus: Option<bool>,
-    #[cbor_map_id(9)]
+    #[int_map_id(9)]
     patch: Option<bool>,
-    #[cbor_map_id(11)]
+    #[int_map_id(11)]
     supplemental: Option<bool>,
-    #[cbor_map_id(1)]
+    #[int_map_id(1)]
     software_name: Text,
-    #[cbor_map_id(13)]
+    #[int_map_id(13)]
     software_version: Option<Text>,
-    #[cbor_map_id(14)]
+    #[int_map_id(14)]
     version_scheme: Option<VersionScheme>,
-    #[cbor_map_id(10)]
+    #[int_map_id(10)]
     media: Option<Text>,
-    #[cbor_map_id(5)]
+    #[int_map_id(5)]
     software_meta: Option<OneOrMany<SoftwareMetaEntry>>,
-    #[cbor_map_id(2)]
+    #[int_map_id(2)]
     entity: OneOrMany<EntityEntry>,
-    #[cbor_map_id(4)]
+    #[int_map_id(4)]
     link: Option<OneOrMany<LinkEntry>>,
-    #[cbor_map_id(6)]
+    #[int_map_id(6)]
     payload: Option<PayloadEntry>,
-    #[cbor_map_id(3)]
+    #[int_map_id(3)]
     evidence: Option<EvidenceEntry>,
-    #[cbor_map_unknown]
+    #[int_map_unknown]
     global_attributes: GlobalAttributes,
     // coswid-extension
 }
