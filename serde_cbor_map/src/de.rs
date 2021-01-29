@@ -125,7 +125,7 @@ pub(crate) fn impl_derive_deserialize_cbor_map(input: TokenStream) -> TokenStrea
             None => quote! {},
             Some(CatchallType::Fields) => {
                 // TODO
-                todo!();
+                panic!("TODO: CatchallType::Fields implementation");
             }
             Some(CatchallType::Unknown) =>
                 quote! {
