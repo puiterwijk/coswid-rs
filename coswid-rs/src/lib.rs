@@ -485,11 +485,3 @@ pub struct CoSWIDTag {
     global_attributes: GlobalAttributes,
     // coswid-extension
 }
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}
