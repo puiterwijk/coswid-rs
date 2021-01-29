@@ -1,7 +1,6 @@
 use coswid::CoSWIDTag;
 
 use std::env;
-use std::io::Cursor;
 use std::fs::File;
 
 fn main() -> Result<(), Box<std::error::Error>> {

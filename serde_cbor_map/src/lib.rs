@@ -1,6 +1,7 @@
 use proc_macro::TokenStream;
 
 mod de;
+mod parser_helper;
 mod ser;
 mod utils;
 
