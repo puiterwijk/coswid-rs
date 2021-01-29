@@ -217,7 +217,6 @@ impl GlobalAttributes {
     pub unsafe fn get_raw_value(&self, key: u32) -> Option<&ciborium::value::Value> {
         return self.any_attribute.get(&key);
     }
-
 }
 
 impl UnknownKeyHandler for GlobalAttributes {
