@@ -1,6 +1,6 @@
 [package]
 name = "coswid"
-version = "0.1.0"
+version = "0.1.1"
 description = "CoSWID parser"
 license = "MIT"
 homepage = "https://github.com/puiterwijk/coswid-rs"
