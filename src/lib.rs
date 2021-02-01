@@ -257,6 +257,8 @@ pub struct LinkEntry {
 
 #[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
 pub struct DirectoryEntry {
+    #[int_map_id(26)]
+    pub path_elements: Box<PathElementGroup>,
     // filesystem-item
     #[int_map_id(22)]
     pub key: Option<bool>,
@@ -309,6 +311,14 @@ pub struct ResourceEntry {
     // global-attributes
     #[int_map_unknown]
     pub global_attributes: GlobalAttributes,
+}
+
+#[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
+pub struct PathElementGroup {
+    #[int_map_id(16)]
+    pub directory: Option<OneOrMany<DirectoryEntry>>,
+    #[int_map_id(17)]
+    pub file: Option<OneOrMany<FileEntry>>,
 }
 
 #[derive(Debug, Deserialize_Int_Map, Serialize_Int_Map)]
