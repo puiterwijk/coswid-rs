@@ -3,7 +3,8 @@ use std::collections::HashMap;
 mod manual_serde;
 
 use num_enum::{IntoPrimitive, TryFromPrimitive};
-use serde_int_map::{UnknownKeyHandler, Deserialize_Int_Map, Serialize_Int_Map};
+use serde_int_map::UnknownKeyHandler;
+use serde_int_map_derive::{Deserialize_Int_Map, Serialize_Int_Map};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 #[derive(Debug, Serialize_repr, Deserialize_repr)]
