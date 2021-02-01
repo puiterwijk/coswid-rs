@@ -20,5 +20,5 @@ ciborium = { version = "0.1.0", features = ["std"] }
 num_enum = "0.5.1"
 serde_json = "1.0.61"
 
-serde_int_map = "0.1.0"
-serde_int_map_derive = "0.1.0"
+serde_int_map = "0.1.2"
+serde_int_map_derive = "0.1.2"
