@@ -66,7 +66,7 @@ pub enum GlobalAttributesKey {
     UnspscVersion = 57,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct GlobalAttributes {
     any_attribute: HashMap<u32, ciborium::value::Value>,
 }
