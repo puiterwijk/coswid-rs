@@ -1,0 +1,17 @@
+name: Automation
+on:
+  - pull_request
+jobs:
+  breakage_status:
+    name: Mark PRs with API breakage status
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: puiterwijk/action-label-rust-incompatible@wip
+        with:
+          dnf-dependencies: ''
+          repo-token: '${{ secrets.GITHUB_TOKEN }}'
+          label-patch: "API/Patch"
+          label-non-breaking: "API/Non-Breaking"
+          label-technically-breaking: "API/Technically-Breaking"
+          label-breaking: "API/Breaking"
